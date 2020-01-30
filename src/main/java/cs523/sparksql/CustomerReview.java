@@ -171,13 +171,13 @@ public class CustomerReview implements Serializable {
 		private static final String COL_REVIEW_HEADLINE = "review_headline";
 		private static final String COL_REVIEW_BODY = "review_body";
 		private static final String COL_REVIEW_DATE = "review_date";
-		
+
 		private static SQLContext _sqlContext;
 
 		@Deprecated
 		public static void SaveToHbase(JavaRDD<CustomerReview> reviewRecords)
 				throws MasterNotRunningException, Exception {
-			
+
 			//create connection with HBase
 			Configuration config = null;
 
@@ -208,7 +208,7 @@ public class CustomerReview implements Serializable {
 
 					.mapToPair(new PairFunction<CustomerReview, ImmutableBytesWritable, Put>() {
 						/**
-						 * 
+						 *
 						 */
 						private static final long serialVersionUID = 1L;
 
@@ -263,7 +263,7 @@ public class CustomerReview implements Serializable {
 		}
 
 		public static JavaPairRDD<String, CustomerReview> ReadFromHbase(JavaSparkContext jsc) throws IOException {
-			
+
 			// SparkConf sparkConf = new SparkConf();
 
 			// we can also run it at local:"local[3]" the number 3 means 3 threads
@@ -271,7 +271,7 @@ public class CustomerReview implements Serializable {
 			// JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 
 			Configuration conf = HBaseConfiguration.create();
-			
+
 			Scan scan = new Scan();
 			scan.addFamily(Bytes.toBytes(CF_DEFAULT));
 
@@ -307,7 +307,7 @@ public class CustomerReview implements Serializable {
 			JavaPairRDD<String, CustomerReview> review_records = hBaseRDD
 					.mapToPair(new PairFunction<Tuple2<ImmutableBytesWritable, Result>, String, CustomerReview>() {
 						/**
-						 * 
+						 *
 						 */
 						private static final long serialVersionUID = 1L;
 
@@ -359,15 +359,15 @@ public class CustomerReview implements Serializable {
 							//}
 						}
 					});
-			
+
 			_sqlContext = new SQLContext(jsc);
 			_sqlContext.createDataFrame(review_records.values(), CustomerReview.class).registerTempTable(TABLE_NAME);
-		    
+
 		    //df.registerTempTable(TABLE_NAME);
 			//_sqlContext.setLogLevel("OFF");
 		    return review_records;
 		}
-		
+
 		public static DataFrame get_verified_purchase()
 		{
 			return exce_sql(sql_verified_purchase());
@@ -401,70 +401,70 @@ public class CustomerReview implements Serializable {
 			return exce_sql(sql_helpful_votes());
 		}
 		private static DataFrame exce_sql(String sql)
-		{  
+		{
 		    //DataFrame df = _sqlContext.createDataFrame(records.values(), CustomerReview.class);
-		    
+
 		    //df.registerTempTable(TABLE_NAME);
-		    
+
 			return _sqlContext.sql(sql);
 		}
-		private static String sql_helpful_votes() 
+		private static String sql_helpful_votes()
 		{
-			return "select * from " + TABLE_NAME +" " + 
-					"order by helpful_votes " + 
+			return "select * from " + TABLE_NAME +" " +
+					"order by helpful_votes " +
 					"desc limit 15";
 		}
-		private static String sql_customer_rating_verified() 
+		private static String sql_customer_rating_verified()
 		{
-			return "select customer_id, " + 
-					"count(*) AS COUNT, " + 
-					"count(distinct product_category) cats, " + 
-					"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, " + 
-					"cast(avg(cast (helpful_votes as decimal (18,4))) as decimal (16,2)) avg_help, " + 
-					"sum(case when star_rating = 1 then 1 else 0 end) one, " + 
-					"sum(case when star_rating = 2 then 1 else 0 end) two, " + 
-					"sum(case when star_rating = 3 then 1 else 0 end) three, " + 
-					"sum(case when star_rating = 4 then 1 else 0 end) four, " + 
-					"sum(case when star_rating = 5 then 1 else 0 end) five, " + 
-					"sum(case when vine = 'Y' then 1 else 0 end) vine_reviews, " + 
-					"sum(case when verified_purchase = 'Y' then 1 else 0 end) verified_purchases " + 
-					"from "+ TABLE_NAME +" " + 
-					"group by customer_id, 1 " + 
-					"order by 2 desc " + 
+			return "select customer_id, " +
+					"count(*) AS COUNT, " +
+					"count(distinct product_category) cats, " +
+					"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, " +
+					"cast(avg(cast (helpful_votes as decimal (18,4))) as decimal (16,2)) avg_help, " +
+					"sum(case when star_rating = 1 then 1 else 0 end) one, " +
+					"sum(case when star_rating = 2 then 1 else 0 end) two, " +
+					"sum(case when star_rating = 3 then 1 else 0 end) three, " +
+					"sum(case when star_rating = 4 then 1 else 0 end) four, " +
+					"sum(case when star_rating = 5 then 1 else 0 end) five, " +
+					"sum(case when vine = 'Y' then 1 else 0 end) vine_reviews, " +
+					"sum(case when verified_purchase = 'Y' then 1 else 0 end) verified_purchases " +
+					"from "+ TABLE_NAME +" " +
+					"group by customer_id, 1 " +
+					"order by 2 desc " +
 					"limit 10";
 		}
-		private static String sql_customer_rating() 
+		private static String sql_customer_rating()
 		{
-			return "select customer_id, " + 
-					"count(*) as COUNT, " + 
-					"count(distinct product_category) cats, " + 
-					"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, " + 
-					"sum(case when star_rating = 1 then 1 else 0 end) one, " + 
-					"sum(case when star_rating = 2 then 1 else 0 end) two, " + 
-					"sum(case when star_rating = 3 then 1 else 0 end) three, " + 
-					"sum(case when star_rating = 4 then 1 else 0 end) four, " + 
-					"sum(case when star_rating = 5 then 1 else 0 end) five " + 
-					"from "+ TABLE_NAME +" " + 
-					"group by customer_id, 1 " + 
-					"order by 2 desc " + 
+			return "select customer_id, " +
+					"count(*) as COUNT, " +
+					"count(distinct product_category) cats, " +
+					"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, " +
+					"sum(case when star_rating = 1 then 1 else 0 end) one, " +
+					"sum(case when star_rating = 2 then 1 else 0 end) two, " +
+					"sum(case when star_rating = 3 then 1 else 0 end) three, " +
+					"sum(case when star_rating = 4 then 1 else 0 end) four, " +
+					"sum(case when star_rating = 5 then 1 else 0 end) five " +
+					"from "+ TABLE_NAME +" " +
+					"group by customer_id, 1 " +
+					"order by 2 desc " +
 					"limit 10";
 		}
-		private static String sql_helpful_rateing() 
+		private static String sql_helpful_rateing()
 		{
-			return "select star_rating, " + 
-					"cast(avg(cast (helpful_votes as decimal (18,4))) as decimal (16,2)) AVG_HELP, " + 
-					"count(*) AS COUNT " + 
-					"from "+ TABLE_NAME +" " + 
-					"group by star_rating, 1 " + 
+			return "select star_rating, " +
+					"cast(avg(cast (helpful_votes as decimal (18,4))) as decimal (16,2)) AVG_HELP, " +
+					"count(*) AS COUNT " +
+					"from "+ TABLE_NAME +" " +
+					"group by star_rating, 1 " +
 					"order by 1";
 		}
-		private static String sql_product_category_rateing() 
+		private static String sql_product_category_rateing()
 		{
-			return "select product_category, " + 
-					"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, " + 
-					"count(*) AS COUNT " + 
-					"from "+ TABLE_NAME +" " + 
-					"group by product_category, 1 " + 
+			return "select product_category, " +
+					"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, " +
+					"count(*) AS COUNT " +
+					"from "+ TABLE_NAME +" " +
+					"group by product_category, 1 " +
 					"order by 2";
 		}
 		private static String sql_vine()
@@ -473,7 +473,7 @@ public class CustomerReview implements Serializable {
 			"cast(avg(cast(star_rating as decimal(5,4))) as decimal (3,2)) avg_rating, "+
 			"count(*) as COUNT "+
 			" from "+ TABLE_NAME +
-			" group by vine, 1"+ 
+			" group by vine, 1"+
 			" order by 1";
 		}
 		private static String sql_ratings_marketplace()
