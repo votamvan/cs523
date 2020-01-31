@@ -14,6 +14,8 @@ import org.apache.hadoop.conf.Configuration;
 
 public class S3SparkStreamReceiver {
 	public static void main(String[] args) throws InterruptedException {
+
+
 		SparkConf sparkConf = new SparkConf().setAppName("s3SparkStream").setMaster("local[*]");
 		JavaSparkContext sc = new JavaSparkContext(sparkConf);
 

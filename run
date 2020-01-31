@@ -1,0 +1,27 @@
+#!/bin/bash
+
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
+
+spark-submit --class "cs523.App" --master yarn ./target/final-1.0-jar-with-dependencies.jar
+
+# update spark 2 ========================================================
+
+# vi /etc/default/cloudera-scm-server
+# export JAVA_HOME=/usr/java/jdk1.8.0_202
+
+# vi ~/.bash_profile
+# export PYSPARK_PYTHON=python
+# export SPARK_HOME=/usr/local/spark
+# add PATH $SPARK_HOME/bin
+
+# test run
+# /usr/local/spark/bin/pyspark
+
+# =============
+#  vi /usr/bin/pyspark
+#  vi /usr/bin/spark-submit
+#  vi /usr/bin/spark-shell
+# exec /usr/local/spark/bin/pyspark "$@"
+# ==============
+# ==========================================================================
