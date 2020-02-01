@@ -5,6 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly
+import plotly.graph_objects as go
 
 import happybase
 CONNECTION = happybase.Connection('localhost', 9090)
@@ -57,6 +58,25 @@ def collect_live_data():
 
     return data_out
 
+def build_heatmap():
+    figure = go.Figure(data=go.Heatmap(
+        z=[[50], [100], [150], [200], [300], [500]],
+        y=['0 to 50: Good', '51 to 100: Moderate', '101 to 150: Unhealthy for Sensitive Groups',
+           '151 to 200: Unhealthy', '201 to 300: Very Unhealthy', '301 to 500: Hazardous'],
+        x=['AQI values'],
+        colorscale=[[0.0, "rgb(0,0,255)"],
+                [0.1111111111111111, "rgb(215,48,39)"],
+                [0.2222222222222222, "rgb(244,109,67)"],
+                [0.3333333333333333, "rgb(253,174,97)"],
+                [0.4444444444444444, "rgb(254,224,144)"],
+                [0.5555555555555556, "rgb(224,243,248)"],
+                [0.6666666666666666, "rgb(171,217,233)"],
+                [0.7777777777777778, "rgb(116,173,209)"],
+                [0.8888888888888888, "rgb(69,117,180)"],
+                [1.0, "rgb(49,54,149)"]]
+    ))
+    return figure
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -65,6 +85,7 @@ app.layout = html.Div(
         html.H4('Live Air Quality Feed'),
         html.Div(id='live-update-text'),
         dcc.Graph(id='live-update-graph'),
+        dcc.Graph(id='heatmap', style={'display': 'block'}, figure=build_heatmap()),
         dcc.Interval(
             id='interval-component',
             interval=5*1000, # in milliseconds
