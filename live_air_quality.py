@@ -9,10 +9,11 @@ import plotly.graph_objects as go
 
 import happybase
 CONNECTION = happybase.Connection('localhost', 9090)
-TABLE_NAME = "air-quality"
+TABLE_NAME = "air_quality"
 COUNTRY = "US"
 CITY = "Fairfield"
 table = CONNECTION.table(TABLE_NAME)
+DATE_FORMAT = "%Y%m%d"
 
 def get_max_by_day(str_day):
     max_val = '0.0'
@@ -28,14 +29,15 @@ def analyze_history(number_of_day):
     }
     for i in range(number_of_day):
         i_days_ago = datetime.datetime.now() - datetime.timedelta(days=i+1)
-        day = i_days_ago.strftime("%Y-%m-%d")
+        day = i_days_ago.strftime(DATE_FORMAT)
         value = get_max_by_day(day)
         data_out["value"].append(value)
-        data_out["time"].append(day)
+        data_out["time"].append(i_days_ago.strftime("%Y-%m-%d"))
 
     return data_out
 
 HISTORY_DATA = analyze_history(10)
+print(HISTORY_DATA)
 
 def collect_live_data():
     data_out = {
@@ -45,7 +47,7 @@ def collect_live_data():
         'value': []
     }
     # fields = [b"cf:country", b"cf:city", b"cf:location", b"cf:latitude", b"cf:longitude", b"cf:value", b"cf:timestamp"]
-    for k, data in table.scan(row_prefix=bytes(datetime.datetime.now().strftime("%Y-%m-%d"), 'utf8')):
+    for k, data in table.scan(row_prefix=bytes(datetime.datetime.now().strftime(DATE_FORMAT), 'utf8')):
         print(k, data)
         time = data[b"cf:timestamp"].decode("utf-8")
         latitude = data[b"cf:latitude"].decode("utf-8")
@@ -64,16 +66,18 @@ def build_heatmap():
         y=['0 to 50: Good', '51 to 100: Moderate', '101 to 150: Unhealthy for Sensitive Groups',
            '151 to 200: Unhealthy', '201 to 300: Very Unhealthy', '301 to 500: Hazardous'],
         x=['AQI values'],
-        colorscale=[[0.0, "rgb(0,0,255)"],
-                [0.1111111111111111, "rgb(215,48,39)"],
-                [0.2222222222222222, "rgb(244,109,67)"],
-                [0.3333333333333333, "rgb(253,174,97)"],
-                [0.4444444444444444, "rgb(254,224,144)"],
-                [0.5555555555555556, "rgb(224,243,248)"],
-                [0.6666666666666666, "rgb(171,217,233)"],
-                [0.7777777777777778, "rgb(116,173,209)"],
-                [0.8888888888888888, "rgb(69,117,180)"],
-                [1.0, "rgb(49,54,149)"]]
+        colorscale=[
+                [0.0000000000000000, "rgb(0,256,0)"],      # good
+                [0.1111111111111111, "rgb(256,256,0)"],      # moderate
+                [0.2222222222222222, "rgb(255,153,0)"],     # unhealthy for sensitive
+                [0.3333333333333333, "rgb(255,0,0)"],       # unhealthy
+                [0.4444444444444444, "rgb(84,0,153)"],      # very unhealthy
+                [0.5555555555555556, "rgb(128,0,0)"],      # hazardous
+                [0.6666666666666666, "rgb(62,27,13)"],
+                [0.7777777777777778, "rgb(62,27,13)"],
+                [0.8888888888888888, "rgb(62,27,13)"],
+                [1.0000000000000000, "rgb(62,27,13)"]
+        ]
     ))
     return figure
 
