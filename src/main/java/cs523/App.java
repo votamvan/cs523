@@ -2,34 +2,35 @@ package cs523;
 
 import java.io.IOException;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
+import org.apache.hadoop.hbase.client.Connection;
 
 import cs523.hbase.AirConditionRepository;
 import cs523.hbase.HbaseConnection;
 import cs523.model.AirQuality;
 import cs523.model.Parser;
-import lombok.var;
 
 public class App {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		try (var connection = HbaseConnection.getInstance()) {
-			var repo = AirConditionRepository.getInstance();
+		try (Connection connection = HbaseConnection.getInstance()) {
+			AirConditionRepository repo = AirConditionRepository.getInstance();
 			repo.createTable();
-			var sparkConf = new SparkConf().setAppName("s3SparkStream").setMaster("local[*]");
-			var sc = new JavaSparkContext(sparkConf);
+			SparkConf sparkConf = new SparkConf().setAppName("s3SparkStream").setMaster("local[*]");
+			JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
-			var hadoopConf = sc.hadoopConfiguration();
+			Configuration hadoopConf = sc.hadoopConfiguration();
 			hadoopConf.set("fs.s3a.access.key", "AKIAIEKMELN37QBVV5KA");
 			hadoopConf.set("fs.s3a.secret.key", "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");
 			// hadoopConf.set("fs.s3a.awsAccessKeyId","AKIAIEKMELN37QBVV5KA");
 			// hadoopConf.set("fs.s3a.awsSecretAccessKey","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");
 
-			try (var ssc = new JavaStreamingContext(sc, new Duration(5000))) {
+			try (JavaStreamingContext ssc = new JavaStreamingContext(sc, new Duration(5000))) {
 				JavaDStream<String> streamOfRecords = ssc.textFileStream("s3a://amazon-reviews-pds-local/tsv");
 				streamOfRecords.print();
 

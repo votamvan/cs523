@@ -15,12 +15,12 @@ public class AirQuality implements Serializable {
 	private String country;
 	private String city;
 	private String location;
-	private double latitude;
-	private double longitude;
-	private double value;
+	private String latitude;
+	private String longitude;
+	private String value;
 	private LocalDateTime timestamp;
 
-	public static AirQuality of(String country, String city, String location, double latitude, double longitude, double value, LocalDateTime timestamp) {
+	public static AirQuality of(String country, String city, String location, String latitude, String longitude, String value, LocalDateTime timestamp) {
 		return new AirQuality(country, city, location, latitude, longitude, value, timestamp);
 	}
 

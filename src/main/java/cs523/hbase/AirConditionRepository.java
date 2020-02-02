@@ -29,7 +29,6 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFunction;
 
 import cs523.model.AirQuality;
-import lombok.var;
 import lombok.extern.log4j.Log4j;
 import scala.Tuple2;
 
@@ -71,7 +70,7 @@ public class AirConditionRepository implements Serializable {
 	public void putAll(Map<String, AirQuality> data) throws IOException {
 		Connection connection = HbaseConnection.getInstance();
 		try (Table tb = connection.getTable(TableName.valueOf("obj"))) {
-			var ls = new ArrayList<Put>();
+			ArrayList<Put> ls = new ArrayList<Put>();
 			for (String k : data.keySet()) {
 				ls.add(putObject(k, data.get(k)));
 			}
@@ -115,8 +114,8 @@ public class AirConditionRepository implements Serializable {
 
 			return AirQuality.of(
 				Bytes.toString(value1), Bytes.toString(value2),
-				Bytes.toString(value3), Bytes.toDouble(value4),
-				Bytes.toDouble(value5), Bytes.toDouble(value6),
+				Bytes.toString(value3), Bytes.toString(value4),
+				Bytes.toString(value5), Bytes.toString(value6),
 				LocalDateTime.parse(Bytes.toString(value7), formatter)
 
 			);
@@ -140,7 +139,9 @@ public class AirConditionRepository implements Serializable {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public Tuple2<ImmutableBytesWritable, Put> call(AirQuality record) throws Exception {
-			Put put = putObject(UUID.randomUUID().toString(), record);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS");
+			String key = record.getTimestamp().format(formatter);
+			Put put = putObject(key, record);
 			return new Tuple2<ImmutableBytesWritable, Put>(new ImmutableBytesWritable(), put);
 		}
 

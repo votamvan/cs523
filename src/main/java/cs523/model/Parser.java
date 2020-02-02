@@ -19,13 +19,11 @@ public class Parser {
 			String country = part[0];
 			String city = part[1];
 			LocalDateTime timestamp = ZonedDateTime.parse(part[2])
-												   .truncatedTo(ChronoUnit.SECONDS)
-												   .toLocalDateTime();
-			double value = Double.parseDouble(part[3]);
-
+												   .truncatedTo(ChronoUnit.SECONDS).toLocalDateTime();
+			String value = part[3];
 			String location = part.length > 4 ? part[4] : "";
-			double latitude = part.length > 5 ?  Double.parseDouble(part[5]) : 0.0;
-			double longitude = part.length > 6 ?  Double.parseDouble(part[6]) : 0.0;
+			String latitude = part.length > 5 ?  part[5] : "";
+			String longitude = part.length > 6 ?  part[6] : "";
 			return AirQuality.of(country, city, location, latitude, longitude, value, timestamp);
 		} catch (DateTimeParseException ex) {
 			log.warn("DateTime:" + ex.getMessage());
