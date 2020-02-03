@@ -116,8 +116,7 @@ public class AirConditionRepository implements Serializable {
 				Bytes.toString(value1), Bytes.toString(value2),
 				Bytes.toString(value3), Bytes.toString(value4),
 				Bytes.toString(value5), Bytes.toString(value6),
-				LocalDateTime.parse(Bytes.toString(value7), formatter)
-
+				LocalDateTime.parse(Bytes.toString(value7).substring(0, 19), formatter)
 			);
 		}
 	}

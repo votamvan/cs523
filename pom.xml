@@ -15,6 +15,14 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 
+	<repositories>
+		<repository>
+      		<id>hortonworks</id>
+      		<name>hortonworks</name>
+      		<url>https://repo.hortonworks.com/content/repositories/releases/</url>
+    	</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -59,11 +67,7 @@
 			<artifactId>spark-core_2.10</artifactId>
 			<version>1.6.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-streaming_2.10</artifactId>
-			<version>1.6.0</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming-kafka_2.10</artifactId>
@@ -71,8 +75,9 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_2.10</artifactId>
-			<version>1.6.1</version>
+			<artifactId>spark-sql_2.12</artifactId>
+			<version>2.4.4</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

@@ -7,8 +7,6 @@ import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
-import cs523.sparksql.CustomerReview;
-import cs523.sparksql.CustomerReview.HbaseTable;
 
 import org.apache.hadoop.conf.Configuration;
 
@@ -27,13 +25,13 @@ public class S3SparkStreamReceiver {
 			JavaDStream<String> streamOfRecords = ssc.textFileStream("s3a://amazon-reviews-pds-local/tsv");
 			streamOfRecords.print();
 
-			JavaDStream<CustomerReview> reviews = streamOfRecords.map(CustomerReview::Parser);
-
-			reviews.foreachRDD(rdd -> {
-				if (!rdd.isEmpty()) {
-					HbaseTable.SaveToHbase(rdd);
-				}
-			});
+//			JavaDStream<CustomerReview> reviews = streamOfRecords.map(CustomerReview::Parser);
+//			reviews.foreachRDD(rdd -> {
+//				if (!rdd.isEmpty()) {
+//					HbaseTable.SaveToHbase(rdd);
+//				}
+//			});
+			
 			ssc.start();
 			ssc.awaitTermination();
 		}
