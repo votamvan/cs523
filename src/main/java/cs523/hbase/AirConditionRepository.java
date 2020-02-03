@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.UUID;
+import java.util.StringJoiner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -116,20 +116,18 @@ public class AirConditionRepository implements Serializable {
 				Bytes.toString(value1), Bytes.toString(value2),
 				Bytes.toString(value3), Bytes.toString(value4),
 				Bytes.toString(value5), Bytes.toString(value6),
-				LocalDateTime.parse(Bytes.toString(value7).substring(0, 19), formatter)
+				LocalDateTime.parse(Bytes.toString(value7), formatter)
+
 			);
 		}
 	}
 
 	public void save(Configuration config, JavaRDD<AirQuality> record)
 				throws MasterNotRunningException, Exception {
-
 		Job job = Job.getInstance(config);
 		job.getConfiguration().set(TableOutputFormat.OUTPUT_TABLE, TABLE_NAME);
 		job.setOutputFormatClass(TableOutputFormat.class);
-
-		JavaPairRDD<ImmutableBytesWritable, Put> hbasePuts = record
-			.mapToPair(new MyPairFunction());
+		JavaPairRDD<ImmutableBytesWritable, Put> hbasePuts = record.mapToPair(new MyPairFunction());
 		hbasePuts.saveAsNewAPIHadoopDataset(job.getConfiguration());
 	}
 
@@ -139,8 +137,11 @@ public class AirConditionRepository implements Serializable {
 		@Override
 		public Tuple2<ImmutableBytesWritable, Put> call(AirQuality record) throws Exception {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS");
-			String key = record.getTimestamp().format(formatter);
-			Put put = putObject(key, record);
+			StringJoiner key = new StringJoiner("|");
+			key.add(record.getCountry().replace(" ", ""));
+			key.add(record.getCity().replace(" ", ""));
+			key.add(record.getTimestamp().format(formatter));
+			Put put = putObject(key.toString(), record);
 			return new Tuple2<ImmutableBytesWritable, Put>(new ImmutableBytesWritable(), put);
 		}
 

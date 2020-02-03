@@ -5,6 +5,9 @@
 
 spark-submit --class "cs523.App" --master yarn ./target/final-1.0-jar-with-dependencies.jar
 
+# run agent
+# java -cp ./target/final-1.0-jar-with-dependencies.jar cs523.agent.App US pm25 2020-01-01T00:00:00 2020-01-01T00:00:00
+
 # update spark 2 ========================================================
 
 # link reference https://medium.com/@yesilliali/installing-apache-spark-2-x-to-cloudera-quickstart-wm-dd5314e6d9bd
