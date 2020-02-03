@@ -3,7 +3,7 @@
 # export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 # export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
 
-spark-submit --class "cs523.App" --master yarn ./target/final-1.0-jar-with-dependencies.jar
+spark-submit --class "cs523.App" --master yarn ./target/final-1.0-jar-with-dependencies.jar kafka
 
 # run agent
 # java -cp ./target/final-1.0-jar-with-dependencies.jar cs523.agent.App US pm25 2020-01-01T00:00:00 2020-01-01T00:00:00
