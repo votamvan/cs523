@@ -25,13 +25,58 @@ public class AirQualityReview {
 		spark = SparkSession.builder().appName("Spark SQL").master("local").getOrCreate();
 		spark.createDataFrame(list, HbaseRecord.class).createOrReplaceTempView(TABLE_NAME);
 	}
-
+	
 	public static void TopAirPolution() {
 		String query =  " SELECT * FROM " + TABLE_NAME 
 					  + " ORDER BY value DESC "
-					  + " LIMIT 15 ";
-		System.out.println(query);
+					  + " LIMIT 5 ";
 		Dataset<Row> sqlDF = spark.sql(query);
 		sqlDF.show();
+		System.out.println(query);
+		System.out.println("====================================================");
+	}
+	
+	public static void BestFiveAirQualityByCountry(String country) {
+		String query =  " SELECT * FROM " + TABLE_NAME 
+					  + " WHERE country = '" + country + "' "
+					  + " ORDER BY value ASC "
+					  + " LIMIT 5 ";
+		Dataset<Row> sqlDF = spark.sql(query);
+		sqlDF.show();
+		System.out.println(query);
+		System.out.println("====================================================");
+	}
+	
+	public static void AverageAirQualityFromDate(String timestamp) {
+		String query =  " SELECT country, city, timestamp, AVG(value)"
+					  + " FROM " + TABLE_NAME
+					  + " WHERE timestamp > '" + timestamp + "' "
+					  + " GROUP BY country, city, timestamp";
+		Dataset<Row> sqlDF = spark.sql(query);
+		sqlDF.show();
+		System.out.println(query);
+		System.out.println("====================================================");
+	}
+	
+	public static void AirQualityIndexFilterByCity(String city, String timestamp) {
+		String query =  " SELECT value FROM " + TABLE_NAME
+					  + " WHERE timestamp > '" + timestamp + "' "
+					  + " AND city = '" + city + "' " 
+					  + " ORDER BY value DESC ";
+		Dataset<Row> sqlDF = spark.sql(query);
+		sqlDF.show();
+		System.out.println(query);
+		System.out.println("====================================================");
+	}
+	
+	public static void AirQualityIndexFilterByLocation(String location, String timestamp) {
+		String query =  " SELECT * FROM " + TABLE_NAME
+					  + " WHERE timestamp > '" + timestamp + "' " 
+					  + " AND location = '" + location + "' "
+					  + " ORDER BY value DESC ";
+		Dataset<Row> sqlDF = spark.sql(query);
+		sqlDF.show();
+		System.out.println(query);
+		System.out.println("====================================================");
 	}
 }

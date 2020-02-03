@@ -6,11 +6,9 @@ import java.util.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.*;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 
 import cs523.hbase.AirConditionRepository;
@@ -32,6 +30,7 @@ public class App {
 			if (mode.equals("kafka")) streamingFromKafka(sc);
 		}
 	}
+
 	public static void streamingFromS3(JavaSparkContext sc) throws IOException, InterruptedException {
 		Configuration hadoopConf = sc.hadoopConfiguration();
 		hadoopConf.set("fs.s3a.access.key", "AKIAIEKMELN37QBVV5KA");
@@ -55,13 +54,25 @@ public class App {
 			ssc.awaitTermination();
 		}
 	}
-	public static void streamingFromKafka(JavaSparkContext sc) throws IOException, InterruptedException {
 
+	public static void streamingFromKafka(JavaSparkContext sc) throws IOException, InterruptedException {
+		// kafka implement here
 	}
+
 	public static void sparkSql(JavaSparkContext jsc, String input) throws IOException, InterruptedException{
 		AirQualityReview.ReadRecords(jsc, getKeyFromFile(input));
+		// top five air polution
 		AirQualityReview.TopAirPolution();
+		// best five air quality by country
+		AirQualityReview.BestFiveAirQualityByCountry("US");
+		// average air quality by date
+		AirQualityReview.AverageAirQualityFromDate("2015-01-01 00:00:01");
+		// air quality index by city
+		AirQualityReview.AirQualityIndexFilterByCity("Detroit", "2015-01-01 00:00:01");
+		// air quality index by location
+		AirQualityReview.AirQualityIndexFilterByLocation("DET POLICE 4TH", "2015-01-01 00:00:01");
 	}
+
 	public static String[] getKeyFromFile(String input){
 		List<String> keys = new ArrayList<String>();
 		try {
