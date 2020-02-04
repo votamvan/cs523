@@ -10,7 +10,7 @@ sh setup_spark2.sh
 export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 ```
 
-### Spark streaming from S3 bucket <air-quality-live>
+### Spark streaming from S3 bucket s3://air-quality-live
 ```
 spark-submit --class cs523.App --master yarn ./target/final-1.0-jar-with-dependencies.jar s3
 ```
