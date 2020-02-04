@@ -9,6 +9,13 @@ sh setup_spark2.sh
 ```
 export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 ```
+### AWS Lambda function triggered by SNS topic
+
+```
+deploy lambda.py to AWS Lambda function and add SNS trigger arn:aws:sns:us-east-1:470049585876:OPENAQ_NEW_MEASUREMENT 
+```
+:warning: it will be triggered every minute and create many S3 files in bucket air-quality-live.
+
 
 ### Spark streaming from S3 bucket s3://air-quality-live
 ```
