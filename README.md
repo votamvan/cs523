@@ -1,12 +1,14 @@
 # Final Project of CS523 - Big Data Technology
 
 ## Professor: Mrudula Mukadam
-## Team member of Group 1
+## Team members of Group 1
 * Tam Van Vo - 610746
 * Minh Tuan Bui - 610582
 * Bao Nguyen Nguyen - 610116
 
-## [Slide Presentation](https://onedrive.live.com/view.aspx?resid=35EA824A9571A24D!418)
+## Slide Presentation at [here](Presentation-Observing_the_Air_Quality.pptx) or [OneDrive](https://onedrive.live.com/view.aspx?resid=35EA824A9571A24D!418)
+
+## Getting Started
 
 ### Install Spark 2.4.4 on Hadoop 2.6
 ```
