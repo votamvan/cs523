@@ -45,7 +45,7 @@ public class App {
 		repo.createTable();
 
 		try (JavaStreamingContext ssc = new JavaStreamingContext(sc, new Duration(5000))) {
-			JavaDStream<String> streamOfRecords = ssc.textFileStream("s3a://amazon-reviews-pds-local/tsv");
+			JavaDStream<String> streamOfRecords = ssc.textFileStream("s3a://air-quality-live");
 			streamOfRecords.print();
 
 			JavaDStream<AirQuality> recoredRDDs = streamOfRecords.map(Parser::parse);
