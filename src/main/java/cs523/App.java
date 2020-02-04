@@ -31,7 +31,7 @@ public class App {
 			String mode = "sql";
 			if (args.length > 0) mode = args[0];
 			if (mode.equals("s3")) streamingFromS3(sc);
-			if (mode.equals("sql")) sparkSql(sc, args[1]);
+			if (mode.equals("sql")) sparkSql(sc);
 			if (mode.equals("kafka")) streamingFromKafka(sc);
 		}
 	}
@@ -84,8 +84,8 @@ public class App {
 		}
 	}
 
-	public static void sparkSql(JavaSparkContext jsc, String input) throws IOException, InterruptedException{
-		AirQualityReview.ReadRecords(jsc, getKeyFromFile(input));
+	public static void sparkSql(JavaSparkContext jsc) throws IOException, InterruptedException{
+		AirQualityReview.ReadRecords(jsc, getKeyFromFile("keys.txt"));
 		// top five air polution
 		AirQualityReview.TopAirPolution();
 		// best five air quality by country
