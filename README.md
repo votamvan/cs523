@@ -22,10 +22,14 @@ export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 ### AWS Lambda function triggered by SNS topic
 
 ```
-deploy lambda.py to AWS and add SNS trigger arn:aws:sns:us-east-1:470049585876:OPENAQ_NEW_MEASUREMENT 
+deploy lambda.py to AWS and add SNS trigger arn:aws:sns:us-east-1:470049585876:OPENAQ_NEW_MEASUREMENT
 ```
 :warning: it will be triggered every minute and create many S3 files in bucket air-quality-live.
 
+### Publish data to Kafka
+```
+java -cp ./target/final-1.0-jar-with-dependencies.jar cs523.agent.App US pm25 2020-01-01T00:00:00 2020-02-01T00:00:00
+```
 
 ### Spark streaming from S3 bucket s3://air-quality-live
 ```
